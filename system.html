@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+ <html>
+   <head>
+   </head>
+   <body>
+    <canvas id="Canvas" width="1200" height="700" style="border:1px solid #000000;"></canvas>
+    <script src="js/global.js"></script>
+    <script scr="js/function.js"></script>
+    <script src="js/class.js"></script>
+    <script>
+      //  animate FPS control
+      var fps, fpsInterval, startTime, now, then, elapsed;
+      fps = 60;
+
+      //objects
+      var pf;  //PlanetFactory
+      var orbit;  //Orbit
+
+      //dat.gui
+      var controls;
+
+      main();
+
+      function main(){
+        pf = new PlanetFactory(2, MRM);
+        orbit = new Orbit(pf.getPlanets());
+
+        pf.createPlanet();
+        orbit.calculate();
+
+        display();
+      }
+
+      function display(){
+        fpsInterval = 1000 / fps;
+        then = Date.now();
+        startTime = then;
+        animate();
+      }
+
+      function animate(){
+        requestAnimationFrame(animate);
+
+        now = Date.now();
+        elapsed = now - then;
+
+        if (elapsed > fpsInterval){
+          then = now - (elapsed % fpsInterval);
+        }
+        update();
+      }
+
+      function clearCanvas(){
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+
+      function update(){
+        //clearCanvas();
+      }
+     </script>
+   </body>
+ </html>
