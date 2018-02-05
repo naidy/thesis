@@ -204,6 +204,12 @@ var Draw = function(orbit, planetset){
 	this.planetset = planetset || null;
 	this.orbit_display = true;
 	this.planet_display = true;
+
+	this.animating = false;
+	this.animate_speed = 0;
+	this.path = null;
+	this.cur_path_index = -1;
+	this.path_length = 0;
 }
 
 Draw.prototype.setOrbit = function(orbit){
@@ -222,6 +228,12 @@ Draw.prototype.set = function(orbit, planetset){
 Draw.prototype.reset = function(){
 	this.orbit.reset();
 	this.planetset.reset();
+	
+	this.animating = false;
+	this.animate_speed = 0;
+	this.path = null;
+	this.cur_path_index = -1;
+	this.path_length = 0;
 }
 
 Draw.prototype.drawOrbit = function(){
@@ -234,4 +246,34 @@ Draw.prototype.drawOrbit = function(){
 	for (var i = 1, c; c = path[i]; i++)
 		ctx.lineTo(c.x, c.y);
 	ctx.stroke();
+}
+
+Draw.prototype.drawOrbitAnimate = function(speed){
+	if (this.animating)
+		return;
+	this.animate_speed = speed;
+	this.path = this.orbit.getPath();
+	this.cur_path_index = 1;
+	this.path_length = this.path.length;
+	this.animating = true;
+	clearCanvas();  ////////////////////////
+}
+
+Draw.prototype.update = function(){
+	if (this.animating){
+		var cnt = 0;
+		while (cnt < this.animate_speed){
+			ctx.beginPath();
+			ctx.moveTo(this.path[this.cur_path_index - 1].x, this.path[this.cur_path_index - 1].y);
+			ctx.lineTo(this.path[this.cur_path_index].x, this.path[this.cur_path_index].y);
+			ctx.stroke();
+			this.cur_path_index ++;
+			if (this.cur_path_index >= this.path_length)
+				break;
+			cnt ++;
+		}
+		
+		if (this.cur_path_index >= this.path_length)
+			this.animating = false;
+	}
 }
