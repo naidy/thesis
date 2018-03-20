@@ -2,9 +2,14 @@
 	Define global variables
 							*****/
 
-var GLOBAL_VELOCITY = 1;
-var GLOBAL_RADIUS = 100;
-var GLOBAL_CIRCLE_RADIUS = 5.0;
+var GLOBAL_VELOCITY = 1;           //1
+var GLOBAL_RADIUS = 100;           //MRM = 100; RMRM = 0.5
+
+var MRM = 'MRM';    //Multiple-level Relative Motion
+var RMRM = 'RMRM';  //Recursive Multiple-level Relative Motion
+
+var PIXEL_MODE = true;             //MRM = true; RMRM = false
+
 var PLANET_DISPLAY = true;
 var EPSILON = 0.000001;
 

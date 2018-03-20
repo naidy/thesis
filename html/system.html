@@ -4,10 +4,10 @@
    </head>
    <body>
     <canvas id="Canvas" width="1200" height="700" style="border:1px solid #000000;"></canvas>
-    <script src="js/dat.gui.min.js"></script>
-    <script src="js/global.js"></script>
-    <script src="js/function.js"></script>
-    <script src="js/class.js"></script>
+    <script src="../js/dat.gui.min.js"></script>
+    <script src="../js/global.js"></script>
+    <script src="../js/function.js"></script>
+    <script src="../js/class.js"></script>
     <script>
       //  animate FPS control
       var fps, fpsInterval, startTime, now, then, elapsed;
@@ -19,27 +19,51 @@
       var orbit;  //Orbit
       var draw;  //Draw
 
+      var RELATIVE_MODE = MRM;
+      var RECURSIVE_LEVEL = 2;
+
       //dat.gui
       var controls;
 
+      init();
       main();
 
-      function main(){
-        pf = new PlanetFactory(2, MRM);
+      function init(){
+        if (RELATIVE_MODE == MRM){
+          GLOBAL_RADIUS = 100;
+          PIXEL_MODE = true;
+        }
+        else if (RELATIVE_MODE == RMRM){
+          GLOBAL_RADIUS = 0.5;
+          PIXEL_MODE = false;
+        }
+
+        pf = new PlanetFactory(RECURSIVE_LEVEL, RELATIVE_MODE);
         ps = pf.createPlanet();
-
         orbit = new Orbit(ps);
-
         draw = new Draw(orbit, ps);
-
+      }
+      function main(){
         //dat.GUI
         var gui = new dat.GUI();
         controls = new function(){
+          this.relative_mode = 'MRM';
           this.angluar_ratio = 'Choose';
           this.animate = function(){
             draw.drawOrbitAnimate(5);  // speed function not work yet
           }
         }
+        gui.add(controls, 'relative_mode', ['MRM', 'RMRM']).onFinishChange(function(value){
+          switch(value){
+            case 'MRM':
+              RELATIVE_MODE = MRM;
+              break;
+            case 'RMRM':
+              RELATIVE_MODE = RMRM;
+              break;
+          }
+          init();
+        }).name('Relative Mode');
         gui.add(controls, 'angluar_ratio', ['Choose', '(0.1, 0.9)', '(0.15, 0.85)', '(0.2, 0.8)', '(0.25, 0.75)', '(0.3, 0.7)', '(0.35, 0.65)', '(0.4, 0.6)', '(0.45, 0.55)', '(0.5, 0.5)']).onFinishChange(function(value){
           var a1, a2;
           switch(value){
@@ -76,8 +100,11 @@
 
           draw.reset();
 
-          ps.setAnGularIncrements(1, a1);
-          ps.setAnGularIncrements(2, a2);
+          var cnt = 0;
+          if (RELATIVE_MODE == MRM)
+            cnt ++;
+          ps.setAnGularIncrements(cnt++, a1);
+          ps.setAnGularIncrements(cnt++, a2);
 
           orbit.calculate();
           draw.drawOrbit();

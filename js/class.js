@@ -63,12 +63,17 @@ Planet.prototype.update = function(){
 		return;
 	else{
 		this.angle += this.angular_increments;
-		this.setPosition(Math.round(this.parent.position.x + this.radius * Math.sin(Math.radians(this.angle))), Math.round(this.parent.position.y + this.radius * Math.cos(Math.radians(this.angle))));
+		if (PIXEL_MODE)
+			this.setPosition(Math.round(this.parent.position.x + this.radius * Math.sin(Math.radians(this.angle))), Math.round(this.parent.position.y + this.radius * Math.cos(Math.radians(this.angle))));
+		else
+			this.setPosition(this.parent.position.x + this.radius * Math.sin(Math.radians(this.angle)), this.parent.position.y + this.radius * Math.cos(Math.radians(this.angle)));
 	}
 }
 
 Planet.prototype.coordinateOffset = function(){
 	this.position.x += Math.round(window_width / 2);
+	if (RELATIVE_MODE == RMRM)
+		this.position.x -= Math.round(window_width / 4);
 	this.position.y = Math.round(-(this.position.y) + window_height / 2);
 }
 
@@ -120,9 +125,6 @@ PlanetSet.prototype.reset = function(){
 }
 
 //////////////////////////////
-
-var MRM = 'MRM';    //Multiple-level Relative Motion
-var RMRM = 'RMRM';  //Recursive Multiple-level Relative Motion
 
 var PlanetFactory = function(size, mode){
 	this.size = size || 0;
