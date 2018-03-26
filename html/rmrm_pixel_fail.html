@@ -23,7 +23,7 @@
       var orbit;  //Orbit
       var draw;  //Draw
 
-      var RELATIVE_MODE = MRM;
+      var RELATIVE_MODE = RMRM;
       var RECURSIVE_LEVEL = 2;
 
       //dat.gui
@@ -33,14 +33,9 @@
       main();
 
       function init(){
-        if (RELATIVE_MODE == MRM){
-          GLOBAL_RADIUS = 100;
-          PIXEL_MODE = true;
-        }
-        else if (RELATIVE_MODE == RMRM){
-          GLOBAL_RADIUS = 0.5;
-          PIXEL_MODE = false;
-        }
+        RELATIVE_MODE == RMRM
+        GLOBAL_RADIUS = 100;
+        PIXEL_MODE = true;
 
         pf = new PlanetFactory(RECURSIVE_LEVEL, RELATIVE_MODE);
         ps = pf.createPlanet();
@@ -51,16 +46,11 @@
         //dat.GUI
         var gui = new dat.GUI();
         controls = new function(){
-          this.relative_mode = 'MRM';
           this.angluar_ratio = 'Choose';
           this.animate = function(){
-            draw.drawOrbitAnimate(5);
+            draw.drawOrbitAnimate(5);  // speed function not work yet
           }
         }
-        gui.add(controls, 'relative_mode', ['MRM', 'RMRM']).onFinishChange(function(value){
-          toggleRelativeMode(value);
-          init();
-        }).name('Relative Mode');
         gui.add(controls, 'angluar_ratio', ['Choose', '(0.1, 0.9)', '(0.15, 0.85)', '(0.2, 0.8)', '(0.25, 0.75)', '(0.3, 0.7)', '(0.35, 0.65)', '(0.4, 0.6)', '(0.45, 0.55)', '(0.5, 0.5)']).onFinishChange(function(value){
           var a1, a2;
           switch(value){

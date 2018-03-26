@@ -12,3 +12,8 @@ Math.degrees = function(radians) {
 function clearCanvas(){
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
+
+// Number Format 123,456,789
+function numberFormat (n){
+	return n.toFixed().replace(/(\d)(?=(\d{3})+(,|$))/g, '$1,');
+}
