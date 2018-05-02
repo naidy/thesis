@@ -67,17 +67,17 @@ Planet.prototype.update = function(){
 		return;
 	else{
 		this.angle += this.angular_increments;
-		if (PIXEL_MODE)
-			this.setPosition(Math.round(this.parent.position.x + this.radius * Math.sin(Math.radians(this.angle))), Math.round(this.parent.position.y + this.radius * Math.cos(Math.radians(this.angle))));
-		else
+		//if (PIXEL_MODE)
+		//	this.setPosition(Math.round(this.parent.position.x + this.radius * Math.sin(Math.radians(this.angle))), Math.round(this.parent.position.y + this.radius * Math.cos(Math.radians(this.angle))));
+		//else
 			this.setPosition(this.parent.position.x + this.radius * Math.sin(Math.radians(this.angle)), this.parent.position.y + this.radius * Math.cos(Math.radians(this.angle)));
 	}
 }
 
 Planet.prototype.coordinateOffset = function(){
 	this.position.x += Math.round(window_width / 2);
-	if (RELATIVE_MODE == RMRM)
-		this.position.x -= Math.round(window_width / 4);
+	//if (RELATIVE_MODE == RMRM)
+	//	this.position.x -= Math.round(window_width / 4);
 	this.position.y += Math.round(window_height / 2);
 }
 
@@ -180,6 +180,46 @@ Orbit.prototype.init = function(){
 	this.planetset.coordinateOffset();
 }
 
+Orbit.prototype.fitScreen = function(){
+	//  scale
+	var max = -1, xMax = -1, xMin = 9999, yMax = -1, yMin = 9999;
+	var size = this.path.length;
+	for (var i = 0; i < size; i++){
+		var curX = Math.abs(this.path[i].x - 400);
+		var curY = Math.abs(this.path[i].y - 400);
+		if (curX > max)
+			max = curX;
+		if (curY > max)
+			max = curY;
+	}
+	var scale = 1 / (max / 350);
+	for (var i = 0; i < size; i++){
+		this.path[i].x *= scale;
+		this.path[i].y *= scale;
+	}
+	console.log ("max = "+max+" , scale = "+scale);
+
+	//  mid align
+	for (i = 0; i < size; i++){
+		curX = this.path[i].x;
+		curY = this.path[i].y;
+		if (curX > xMax)
+			xMax = curX;
+		else if (curX < xMin)
+			xMin = curX;
+		if (curY > yMax)
+			yMax = curY;
+		else if (curY < yMin)
+			yMin = curY;
+	}
+	var xMid = 400 - (xMax + xMin) / 2;
+	var yMid = 400 - (yMax + yMin) / 2;
+	for (var i = 0; i < size; i++){
+		this.path[i].x += xMid;
+		this.path[i].y += yMid;
+	}
+}
+
 Orbit.prototype.calculate = function(){
 	this.init();
 	var target = this.planetset.getPlanet(this.planetset.size()-1);
@@ -210,6 +250,7 @@ Orbit.prototype.calculate = function(){
 		count++;
 	}
 	updateIterationText(count);
+	this.fitScreen();
 }
 
 Orbit.prototype.reset = function(){

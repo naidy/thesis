@@ -25,7 +25,7 @@
       var draw;  //Draw
 
       var RELATIVE_MODE = MRM;
-      var RECURSIVE_LEVEL = 2;
+      var RECURSIVE_LEVEL = 3;
       var ANIMATE_SPEED = 10;
 
       //dat.gui
@@ -95,6 +95,7 @@
             cnt ++;
           ps.setAnGularIncrements(cnt++, a1);
           ps.setAnGularIncrements(cnt++, a2);
+          ps.setAnGularIncrements(cnt++, -0.1);
 
           //toggleLoadingText("visible");
           orbit.calculate();
