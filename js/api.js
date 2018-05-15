@@ -11,10 +11,6 @@ function toggleRelativeMode (value){
 	}
 }
 
-function toggleLoadingText (value){
-	document.getElementById("status").style.visibility = value;
-}
-
 function updateIterationText (value){
 	document.getElementById("iterations_display").innerHTML = numberFormat(value) + " Iterations.";
 }

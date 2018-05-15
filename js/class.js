@@ -197,7 +197,7 @@ Orbit.prototype.fitScreen = function(){
 		this.path[i].x *= scale;
 		this.path[i].y *= scale;
 	}
-	console.log ("max = "+max+" , scale = "+scale);
+	//console.log ("max = "+max+" , scale = "+scale);
 
 	//  mid align
 	for (i = 0; i < size; i++){

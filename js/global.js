@@ -5,6 +5,8 @@
 var GLOBAL_VELOCITY = 1;           //1
 var GLOBAL_RADIUS = 100;           //MRM = 100; RMRM = 0.5
 
+var SOLAR_SYSTEM = 'SOLAR_SYSTEM';
+
 var MRM = 'MRM';                   //Multiple-level Relative Motion
 var RMRM = 'RMRM';                 //Recursive Multiple-level Relative Motion
 
