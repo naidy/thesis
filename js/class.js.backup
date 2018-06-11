@@ -166,24 +166,16 @@ PlanetFactory.prototype.getPlanetset = function(){
 
 //////////////////////////////
 
-var Orbit = function(planetset, zoom, color){
+var Orbit = function(planetset){
 	this.planetset = planetset;
 	this.path = [];
-	this.zoom = zoom || 1;
-	this.color = color || '#000000';
-}
-
-Orbit.prototype.set = function(planetset, zoom, color){
-	this.planetset = planetset;
-	this.zoom = zoom;
-	this.color = color;
 }
 
 Orbit.prototype.init = function(){
 	//  init all planets' position
 	for (var i = 1; i < this.planetset.size(); i++){
 		var p = this.planetset.getPlanet(i);
-		p.setPosition(0, this.planetset.getPlanet(p.parent.id).getPosition().y + p.radius);
+		p.setPosition(0, this.planetset.getPlanet(p.parent.id).getPosition().y + GLOBAL_RADIUS);
 	}
 	this.planetset.coordinateOffset();
 }
@@ -205,17 +197,7 @@ Orbit.prototype.fitScreen = function(){
 		this.path[i].x *= scale;
 		this.path[i].y *= scale;
 	}
-}
-
-Orbit.prototype.fitZoom = function(){
-	//  scale
-	var xMax = -1, xMin = 9999, yMax = -1, yMin = 9999;
-	var curX, curY;
-	var size = this.path.length;
-	for (var i = 0; i < size; i++){
-		this.path[i].x *= this.zoom;
-		this.path[i].y *= this.zoom;
-	}
+	//console.log ("max = "+max+" , scale = "+scale);
 
 	//  mid align
 	for (i = 0; i < size; i++){
@@ -269,7 +251,6 @@ Orbit.prototype.calculate = function(){
 	}
 	updateIterationText(count);
 	this.fitScreen();
-	this.fitZoom();
 }
 
 Orbit.prototype.reset = function(){
@@ -324,10 +305,9 @@ Draw.prototype.reset = function(){
 Draw.prototype.drawOrbit = function(){
 	var path = this.orbit.getPath();
 
-	//clearCanvas();  ////////////////////////
+	clearCanvas();  ////////////////////////
 
 	ctx.beginPath();
-	ctx.strokeStyle = this.orbit.color;
 	ctx.moveTo(path[0].x, path[0].y);
 	for (var i = 1, c; c = path[i]; i++)
 		ctx.lineTo(c.x, c.y);

@@ -9,40 +9,7 @@
     <canvas id="Canvas" width="800" height="800" style="border:1px solid #000000;"></canvas>
     <div id="displays" style="position:relative; color:red; font-size:50px; 
         top:-110px; left:1000px;">
-      <p id="iterations_display">0 Iterations.</p>
-    </div>
-    <div id="buttons">
-      <div id="system_mode_buttons" style="position:relative; top:-950px; left:1000px">
-        <p class="text">System Mode</p>
-        <button class="button" value="SOLAR_SYSTEM">Solar System</button>
-      </div>
-      <div id="relative_mode_buttons" style="position:relative; top:-950px; left:1000px">
-        <p class="text">Relative Mode</p>
-        <button class="button" value="MRM">MRM</button>
-        <button class="button" value="RMRM">RMRM</button>
-      </div>
-      <div id="recursive_level_buttons" style="position:relative; top:-950px; left:1000px">
-        <p class="text">Recursive Level</p>
-        <button class="button" value="2">2RL</button>
-        <button class="button" value="3">3RL</button>
-      </div>
-      <div id="angular_increments_buttons" style="position:relative; top:-950px; left:1000px">
-        <p class="text">Angular Increments</p>
-        <button class="button" value="1">(0.1, 0.9)</button>
-        <button class="button" value="2">(0.15, 0.85)</button>
-        <button class="button" value="3">(0.2, 0.8)</button>
-        <button class="button" value="4">(0.25, 0.75)</button>
-        <button class="button" value="5">(0.3, 0.7)</button>
-        <br/>
-        <button class="button" value="6">(0.35, 0.65)</button>
-        <button class="button" value="7">(0.4, 0.6)</button>
-        <button class="button" value="8">(0.45, 0.55)</button>
-        <button class="button" value="9">(0.5, 0.5)</button>
-      </div>
-      <div id="animate_buttons" style="position:relative; top:-950px; left:1000px">
-        <p class="text">Animation</p>
-        <button class="button">Animate</button>
-      </div>
+      <p id="iterations_display" style="visibility: hidden">0 Iterations.</p>
     </div>
     <script src="../js/global.js"></script>
     <script src="../js/function.js"></script>
@@ -73,33 +40,51 @@
       init();
       main();
 
+      function setParameter(rl, rm, zoom, color){
+        RELATIVE_MODE = rm;
+        RECURSIVE_LEVEL = rl;
+        changeParameter(zoom, color);
+      }
+
       function init(){
         pf = new PlanetFactory(RECURSIVE_LEVEL, RELATIVE_MODE);
         ps = pf.createPlanet();
         orbit = new Orbit(ps);
         draw = new Draw(orbit, ps);
       }
-      function redraw(){
+
+      function changeParameter(zoom, color){
+        pf.set(RECURSIVE_LEVEL, RELATIVE_MODE);
+        ps = pf.createPlanet();
+        orbit.set(ps, zoom, color);
+        draw.set(orbit, ps);
+      }
+
+      function redraw(a1, a2){
         draw.reset();
 
         var cnt = 0;
         if (RELATIVE_MODE == MRM)
           cnt ++;
-        ps.setAnGularIncrements(cnt++, ANGULAR_INCREMENTS_1);
-        ps.setAnGularIncrements(cnt++, ANGULAR_INCREMENTS_2);
+        ps.setAnGularIncrements(cnt++, a1);
+        ps.setAnGularIncrements(cnt++, a2);
         if (RECURSIVE_LEVEL > 2)
           ps.setAnGularIncrements(cnt++, -0.1);
 
         //toggleLoadingText("visible");
         orbit.calculate();
         //toggleLoadingText("hidden");
-        clearCanvas();
         draw.drawOrbit();
-
-        display();
       }
+
       function main(){
-        redraw();
+        setParameter(2, RMRM, 1.5, '#ff0000');
+        redraw(0.1, 0.9);
+        setParameter(2, RMRM, 2.0, '#00ff00');
+        redraw(0.1, 0.9);
+        setParameter(2, RMRM, 1.0, '#0000ff');
+        redraw(0.3, 0.7);
+
         display();
       }
 
