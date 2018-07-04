@@ -66,4 +66,38 @@ $(document).ready(function(){
 		draw.drawOrbitAnimate(ANIMATE_SPEED);
 		console.log("Animate");
 	});
+
+	$("#create_clear").children("button").click(function(){
+		switch($(this).val()){
+			case "create":
+				//alert(""+$("#relative_level").children("input").val()+", "+$("#relative_mode").children("input").val()+", "+$("#pattern_size").children("input").val()+", "+$("#pattern_color").children("input").val());
+				setParameter(
+					Number($("#relative_level").children("input").val()), 
+					$("#relative_mode").children(":checked").val(),
+					Number($("#pattern_size").children("input").val()),
+					$("#pattern_color").children("input").val(),
+					Number($("#line_width").children("input").val())
+				);
+				redraw($("#angular_increments").children("input").val());
+				break;
+			case "clear":
+				init();
+				clearCanvas();
+				updateIterationText(0);
+				break;
+			case "animate":
+				if (!draw.isAnimating()){
+					$(this).parent().children("button").attr("disabled", true);
+					$(this).attr("disabled", false);
+					$(this).html("Stop");
+					draw.drawOrbitAnimate(ANIMATE_SPEED);
+				} else {
+					$(this).parent().children("button").attr("disabled", false);
+					$(this).html("Animate");
+					draw.stop();
+				}
+				
+				break;
+		}
+	})
 });
