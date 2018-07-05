@@ -96,8 +96,12 @@ $(document).ready(function(){
 					$(this).html("Animate");
 					draw.stop();
 				}
-				
 				break;
 		}
-	})
+	});
+
+	$("#download").click(function(){
+		var image = canvas.toDataURL();
+		$(this).attr("href", image);
+	});
 });

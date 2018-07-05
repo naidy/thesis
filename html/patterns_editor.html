@@ -41,7 +41,8 @@
       <div id="create_clear" style="position:relative; left:-50px; top:70px; font-size:20px">
         <button class="button" value="create">Create</button>
         <button class="button" value="clear">Clear</button>
-        <button class="button" value="animate" disabled>Animate</button>
+        <button class="button" value="animate" style="display: none">Animate</button>
+        <a href="#" class="button" id="download" download="image.png">Download</a>
       </div>
     </div>
     <script src="../js/global.js"></script>
@@ -123,7 +124,7 @@
         setParameter(2, RMRM, 1.0, '#0000ff');
         redraw(0.3, 0.7);
         */
-
+        clearCanvas();
         display();
       }
 
