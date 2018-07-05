@@ -27,3 +27,6 @@ function numberFormat (n){
 	return n.toFixed().replace(/(\d)(?=(\d{3})+(,|$))/g, '$1,');
 }
 
+function roundX (val, precision) {
+  return Math.round(Math.round(val * Math.pow(10, (precision || 0) + 1)) / 10) / Math.pow(10, (precision || 0));
+}

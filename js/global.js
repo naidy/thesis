@@ -16,9 +16,3 @@ var ITERATIONS_LIMIT = 0;          //0 = until return to start position
 
 var PLANET_DISPLAY = false;
 var EPSILON = 2;
-
-var canvas = document.getElementById("Canvas");
-var ctx = canvas.getContext("2d");
-
-var window_width = canvas.width;
-var window_height = canvas.height;

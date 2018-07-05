@@ -207,7 +207,7 @@ Orbit.prototype.fitScreen = function(){
 	}
 }
 
-Orbit.prototype.fitZoom = function(){
+Orbit.prototype.fitZoom = function(w, h){
 	//  scale
 	var xMax = -1, xMin = 9999, yMax = -1, yMin = 9999;
 	var curX, curY;
@@ -230,15 +230,15 @@ Orbit.prototype.fitZoom = function(){
 		else if (curY < yMin)
 			yMin = curY;
 	}
-	var xMid = 400 - (xMax + xMin) / 2;
-	var yMid = 400 - (yMax + yMin) / 2;
+	var xMid = w / 2 - (xMax + xMin) / 2;
+	var yMid = h / 2 - (yMax + yMin) / 2;
 	for (var i = 0; i < size; i++){
 		this.path[i].x += xMid;
 		this.path[i].y += yMid;
 	}
 }
 
-Orbit.prototype.calculate = function(){
+Orbit.prototype.calculate = function(w, h){
 	this.init();
 	var target = this.planetset.getPlanet(this.planetset.size()-1);
 	var start = new Coor2d(target.getPosition().x, target.getPosition().y);
@@ -267,9 +267,9 @@ Orbit.prototype.calculate = function(){
 		//console.log (cp);
 		count++;
 	}
-	updateIterationText(count);
+	//updateIterationText(count);
 	this.fitScreen();
-	this.fitZoom();
+	this.fitZoom(w, h);
 }
 
 Orbit.prototype.reset = function(){

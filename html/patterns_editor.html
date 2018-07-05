@@ -1,7 +1,7 @@
 <!DOCTYPE html>
  <html>
    <head>
-    <title>Geometric recursive patterns generating system</title>
+    <title>Pattern Editor</title>
     <link rel="stylesheet" href="../css/button.css">
     <script src="../js/jquery-3.3.1.min.js"></script>
    </head>
@@ -13,9 +13,9 @@
     </div>
     <div id="new_pattern" style="position:relative; top:-930px; left:1200px;">
       <p style="font-size:50px; color:#dd4444"><b>New Pattern</b></p>
-      <div id="relative_level" style="position:relative; left:-120px; font-size:20px">
-        <b>Relative Level:</b><br/>
-        <input type="number" name="relativelevel" min="2" value="2">
+      <div id="recursive_level" style="position:relative; left:-120px; font-size:20px">
+        <b>Recursive Level:</b><br/>
+        <input type="number" name="recursivelevel" min="2" value="2">
       </div>
       <div id="relative_mode" style="position:relative; left:220px; top:-45px; font-size:20px">
         <b>Relative Mode:</b><br/>
@@ -62,12 +62,60 @@
       var SYSTEM_MODE = SOLAR_SYSTEM;
       var RELATIVE_MODE = MRM;
       var RECURSIVE_LEVEL = 2;
-      var ANGULAR_INCREMENTS_1 = 0.1, ANGULAR_INCREMENTS_2 = 0.9;
       var ANIMATE_SPEED = 10;
+
+      var canvas = document.getElementById("Canvas");
+      var ctx = canvas.getContext("2d");
+      var window_width = canvas.width;
+      var window_height = canvas.height;
     </script>
 
     <script src="../js/api.js"></script>
-    <script src="../js/jquery.api.js"></script>
+    <script>
+      $(document).ready(function(){
+        $("button").click(function(){
+          $(this).parent().children("button").css("background-color", "#dddddd");
+          $(this).css("background-color", "#ffffdd");
+        });
+        
+        $("#create_clear").children("button").click(function(){
+          switch($(this).val()){
+            case "create":
+              setParameter(
+                Number($("#recursive_level").children("input").val()), 
+                $("#relative_mode").children(":checked").val(),
+                Number($("#pattern_size").children("input").val()),
+                $("#pattern_color").children("input").val(),
+                Number($("#line_width").children("input").val())
+              );
+              redraw($("#angular_increments").children("input").val());
+              break;
+            case "clear":
+              init();
+              clearCanvas();
+              updateIterationText(0);
+              break;
+            case "animate":
+              if (!draw.isAnimating()){
+                $(this).parent().children("button").attr("disabled", true);
+                $(this).attr("disabled", false);
+                $(this).html("Stop");
+                draw.drawOrbitAnimate(ANIMATE_SPEED);
+              } else {
+                $(this).parent().children("button").attr("disabled", false);
+                $(this).html("Animate");
+                draw.stop();
+              }
+              break;
+          }
+        });
+
+        $("#download").click(function(){
+          var image = canvas.toDataURL();
+          $(this).attr("href", image);
+        });
+      });
+    </script>
 
     <script>
 
@@ -110,7 +158,7 @@
         }
 
         //toggleLoadingText("visible");
-        orbit.calculate();
+        orbit.calculate(800, 800);
         //toggleLoadingText("hidden");
         draw.drawOrbit();
       }
