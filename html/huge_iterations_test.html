@@ -26,6 +26,11 @@
       var RELATIVE_MODE = MRM;
       var RECURSIVE_LEVEL = 2;
 
+      var canvas = document.getElementById("Canvas");
+      var ctx = canvas.getContext("2d");
+      var window_width = canvas.width;
+      var window_height = canvas.height;
+
       //dat.gui
       var controls;
 
@@ -52,9 +57,9 @@
             draw.reset();
             ps.setAnGularIncrements(1, 0.1);
             ps.setAnGularIncrements(2, 0.9);
-            toggleLoadingText("visible");
+            //toggleLoadingText("visible");
             orbit.calculate();
-            toggleLoadingText("hidden");
+            //toggleLoadingText("hidden");
             draw.drawOrbit();
           }
         }

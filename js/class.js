@@ -267,7 +267,7 @@ Orbit.prototype.calculate = function(w, h){
 		//console.log (cp);
 		count++;
 	}
-	//updateIterationText(count);
+	updateIterationText(count);
 	this.fitScreen();
 	this.fitZoom(w, h);
 }
