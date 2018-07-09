@@ -18,7 +18,7 @@ function clearCanvas(color){
 		ctx.fillRect(0, 0, 800, 800);
 	}
 	*/
-	ctx.fillStyle = "white";
+	ctx.fillStyle = color || background_color || "white";
 	ctx.fillRect(0, 0, 800, 800);
 }
 

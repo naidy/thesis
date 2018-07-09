@@ -28,8 +28,9 @@
         <input type="text" name="patternsize" value="1.0">
       </div>
       <div id="pattern_color" style="position:relative; left:220px; top:-45px; font-size:20px">
-        <b>Pattern Color:</b><br/>
-        <input type="color" name="patterncolor">
+        <b>Pattern & Background Color:</b><br/>
+        <input type="color" name="patterncolor">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="color" name="backgroundcolor" value="#ffffff">
       </div>
       <div id="angular_increments" style="position:relative; left:-120px; font-size:20px">
         <b>Angular Increments:</b><br/>
@@ -69,6 +70,7 @@
       var ctx = canvas.getContext("2d");
       var window_width = canvas.width;
       var window_height = canvas.height;
+      var background_color = "#ffffff";
     </script>
 
     <script src="../js/api.js"></script>
@@ -80,13 +82,14 @@
         });
         
         $("#create_clear").children("button").click(function(){
+          background_color = $("#pattern_color").children("input:last").val();
           switch($(this).val()){
             case "create":
               setParameter(
                 Number($("#recursive_level").children("input").val()), 
                 $("#relative_mode").children(":checked").val(),
                 Number($("#pattern_size").children("input").val()),
-                $("#pattern_color").children("input").val(),
+                $("#pattern_color").children("input:first").val(),
                 Number($("#line_width").children("input").val())
               );
               redraw($("#angular_increments").children("input").val());
