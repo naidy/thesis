@@ -18,8 +18,8 @@ function clearCanvas(color){
 		ctx.fillRect(0, 0, 800, 800);
 	}
 	*/
-	ctx.fillStyle = color || background_color || "white";
-	ctx.fillRect(0, 0, 800, 800);
+	ctx.fillStyle = color || "white";
+	ctx.fillRect(0, 0, window_width, window_height);
 }
 
 // Number Format 123,456,789
