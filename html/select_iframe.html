@@ -20,7 +20,7 @@
       <button class="button" value="+">+</button>
       <button class="button" value="-">-</button>
     </div>
-    <div id="button_more" style="position:relative; top:-57px" align="center">
+    <div id="button_more" style="position:relative; top:-57px; left: 430px">
       <button class="button" value="more">More</button>
     </div>
     <p id="iterations_display" style="visibility: hidden;">0 Iterations.</p>
@@ -108,7 +108,11 @@
         $("canvas").click(function(){
           //console.log(""+$(this).attr("id"));
           var id_str = $(this).attr("id");
-          angular_array.push(roundX((Number(id_str.substring(6,id_str.length))+1)*0.1, 1).toString());
+          var id_num = roundX((Number(id_str.substring(6,id_str.length))+1)*0.1, 1);
+          if (sign < 0){
+            id_num *= -1;
+          }
+          angular_array.push(id_num.toString());
           angular_index ++;
 
           if (angular_index >= 2){
@@ -238,7 +242,7 @@
           if (j > 0){
             angular_t += ",";
           }
-          if (sign < 0 && j >= 2){
+          if (sign < 0 && j >= 2 && j == angular_index){
             angular_t += "-";
           }
           angular_t += "0.1";
