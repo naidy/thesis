@@ -1,37 +1,27 @@
 <!DOCTYPE html>
  <html>
    <head>
-    <title>Gallery Generator</title>
-    <link rel="shortcut icon" href="../graphic/image_zHQ_icon.ico" type="image/x-icon" />
+    <title>select iframe</title>
     <link rel="stylesheet" href="../css/button.css">
+    <style>
+      html{
+        width: :100%;
+        overflow-x: hidden;
+      }
+    </style>
     <script src="../js/jquery-3.3.1.min.js"></script>
    </head>
    <body>
-    <div id="title">
-      <p style="font-size:50px; color:#dd4444" align="center"><b>Gallery Generator</b></p>
-    </div>
-    <div id="dashboard" align="center" style="font-size:20px">
-      <b>Recursive Level:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
-      <input type="number" id="recursivelevel" min="2" value="2">
-      <br/>
-      <b>Relative Mode:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
-      <input type="radio" name="relativemode" value="MRM" checked>MRM
-      <input type="radio" name="relativemode" value="RMRM">RMRM
-      <br/>
-      <b>Angular Increments:</b>
-      <input type="text" id="angularincrements" value="0.1,0.9">
-      <br/>
-      <b>Delta:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
-      <input type="text" id="delta" value="0.05,-0.05">
-      <br/><b>Number:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>
-      <input type="number" id="number" value="9" min="0">
-      <br/><br/>
-      <button class="button" id="generatebutton">Generate</button>
-      <br/><br/>
-    </div>
     <div id="table" align="center">
       <table border="1">
       </table>
+    </div>
+    <div id="button_sign" style="position:relative; left:170px; visibility: hidden">
+      <button class="button" value="+">+</button>
+      <button class="button" value="-">-</button>
+    </div>
+    <div id="button_more" style="position:relative; top:-57px" align="center">
+      <button class="button" value="more">More</button>
     </div>
     <p id="iterations_display" style="visibility: hidden;">0 Iterations.</p>
     <script src="../js/global.js"></script>
@@ -46,26 +36,39 @@
 
       var SYSTEM_MODE = SOLAR_SYSTEM;
       var RELATIVE_MODE = MRM;
-      var RECURSIVE_LEVEL = 2;
+      var RECURSIVE_LEVEL = 0;
 
       var canvas;
       var ctx;
-      var window_width = 380;
-      var window_height = 380;
+      var window_width = 200;
+      var window_height = 200;
+
+      var table_number = 9;
+      var sign = 1;  // 1 = positive,  -1 = negative
+      var angular_index = 0;
+      var angular_array = [];
     </script>
 
     <script src="../js/api.js"></script>
     <script>
       $(document).ready(function(){
-        $("#generatebutton").click(function(){
-          generateTable(Number($("#number").val()));
-          generatePattern(
-            Number($("#recursivelevel").val()),
-            $("#dashboard").children("input:checked").val(),
-            $("#angularincrements").val(),
-            $("#delta").val(),
-            Number($("#number").val())
-          );
+        $("#button_more").children("button").click(function(){
+          table_number += 9;
+          drawTable();
+        });
+
+        $("#button_sign").children("button").click(function(){
+          if ($(this).val() == "+"){
+            if (sign != 1){
+              sign = 1;
+              drawTable();
+            }
+          } else if ($(this).val() == "-"){
+            if (sign != -1){
+              sign = -1;
+              drawTable();
+            }
+          }
         });
       });
     </script>
@@ -101,6 +104,33 @@
           }
           $("#table").children("table").append("</tr>");
         }
+
+        $("canvas").click(function(){
+          //console.log(""+$(this).attr("id"));
+          var id_str = $(this).attr("id");
+          angular_array.push(roundX((Number(id_str.substring(6,id_str.length))+1)*0.1, 1).toString());
+          angular_index ++;
+
+          if (angular_index >= 2){
+            $("#button_sign").css("visibility", "visible");
+          }
+
+          //console.log(angular_array[angular_index-1]);
+
+          if (angular_index >= RECURSIVE_LEVEL){
+            var angular_str = "";
+            for (var i = 0; i < RECURSIVE_LEVEL; i++){
+              if (i > 0){
+                angular_str += ",";
+              }
+              angular_str += angular_array[i];
+            }
+            window.parent.postMessage(angular_str, "*");
+          } else {
+            table_number = 9;
+            drawTable();
+          }
+        });
       }
 
       function generatePattern(rl, rm, angular, delta, number){
@@ -171,13 +201,64 @@
         }
 
         //toggleLoadingText("visible");
-        orbit.calculate(380, 380);
+        orbit.calculate(window_width, window_height);
         //toggleLoadingText("hidden");
         draw.drawOrbit();
       }
 
       function main(){
-        
+        window.addEventListener("message", receiveMessage);
+      }
+
+      function receiveMessage(event){
+        var split_parameter = event.data.split(',');
+        RECURSIVE_LEVEL = Number(split_parameter[0].charAt(0));
+        RELATIVE_MODE = split_parameter[1];
+
+        drawTable();
+      }
+
+      function drawTable(){
+        if (RECURSIVE_LEVEL < 2){
+          alert("Post Message Error! (main to iframe)");
+          return;
+        }
+        generateTable(table_number);
+        var angular_t = "";
+        var delta = "";
+        var i = 0, j;
+        for (i = 0; i < angular_index; i++){
+          if (i > 0){
+            angular_t += ",";
+          }
+          angular_t += angular_array[i];
+        }
+
+        for (j = i; j < RECURSIVE_LEVEL; j++){
+          if (j > 0){
+            angular_t += ",";
+          }
+          if (sign < 0 && j >= 2){
+            angular_t += "-";
+          }
+          angular_t += "0.1";
+        }
+
+        for (i = 0; i < RECURSIVE_LEVEL; i++){
+          if (i > 0){
+            delta += ",";
+          }
+          if (i == angular_index){
+            if (sign < 0 && j >= 2){
+              delta += "-";
+            }
+            delta += "0.1";
+          } else {
+            delta += "0";
+          }
+        }
+
+        generatePattern(RECURSIVE_LEVEL, RELATIVE_MODE, angular_t, delta, table_number)
       }
      </script>
    </body>

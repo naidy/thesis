@@ -18,7 +18,3 @@ function updateIterationText (value){
 function adjustAnimateSpeed (value){
 	ANIMATE_SPEED = Math.round(value * 10);
 }
-
-function setRecursiveLevel (value){
-	RECURSIVE_LEVEL = value;
-}

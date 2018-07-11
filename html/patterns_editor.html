@@ -96,8 +96,7 @@
               break;
             case "clear":
               init();
-              clearCanvas(background_color);
-              updateIterationText(0);
+              clearCanvas(ctx, background_color);
               break;
             case "animate":
               if (!draw.isAnimating()){
@@ -176,8 +175,8 @@
         setParameter(2, RMRM, 1.0, '#0000ff');
         redraw(0.3, 0.7);
         */
-        clearCanvas();
-        display();
+        clearCanvas(ctx);
+        //display();
       }
 
       function display(){

@@ -9,7 +9,7 @@ Math.degrees = function(radians) {
 };
 
 // Clear canvas
-function clearCanvas(color){
+function clearCanvas(ctx, color){
 	/*
 	if (color == undefined){
 		ctx.clearRect(0, 0, canvas.width, canvas.height);

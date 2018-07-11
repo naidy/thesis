@@ -337,6 +337,7 @@ Draw.prototype.drawOrbit = function(){
 	ctx.beginPath();
 	ctx.strokeStyle = this.orbit.color;
 	ctx.lineWidth = this.line_width;
+	ctx.lineJoin = 'miter';
 	ctx.moveTo(path[0].x, path[0].y);
 	for (var i = 1, c; c = path[i]; i++)
 		ctx.lineTo(c.x, c.y);
@@ -385,4 +386,52 @@ Draw.prototype.stop = function(){
 
 Draw.prototype.isAnimating = function(){
 	return this.animating;
+}
+
+/***** Save Data *****/
+
+var Data = function(id, str){  // rl_rm_angular_delta_number_zoom_color_width
+	this.id = id;
+	this.str = str;
+
+	var parse = str.split("_");
+	this.rl = Number(parse[0]);
+	this.rm = parse[1];
+	this.angular = parse[2];
+	this.delta = parse[3];
+	this.number = Number(parse[4]);
+	this.zoom = Number(parse[5]);
+	this.color = parse[6];
+	this.width = Number(parse[7]);
+}
+
+/***** Data Set *****/
+
+var DataSet = function(){
+	this.count = 0;
+	this.array = [];
+}
+
+DataSet.prototype.push = function(str){
+	var data = new Data(this.count, str);
+	this.count ++;
+	return this.array.push(data);
+}
+
+DataSet.prototype.size = function(){
+	return this.array.length;
+}
+
+DataSet.prototype.pop = function(){
+	this.count --;
+	return this.array.pop();
+}
+
+DataSet.prototype.clear = function(){
+	this.count = 0;
+	this.array = [];
+}
+
+DataSet.prototype.reDraw = function(){
+
 }
