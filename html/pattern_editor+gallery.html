@@ -46,6 +46,7 @@
       <div id="background_color" style="position:relative; left:170px; top:-133px; font-size:20px">
         <b>Background Color:</b>
         <input type="color" name="backgroundcolor" value="#ffffff" class="button">
+        <button class="button" value="setbackgroundcolor">Set</button>
       </div>
       <div id="pattern_size" style="position:relative; left:-120px; top:-110px; font-size:20px">
         <b>Pattern Size:</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -70,11 +71,17 @@
       <div id="pattern_detail" style="position:relative; left:-120px; top:-130px; font-size:20px">
         Click to select pattern.
       </div>
-      <div id="create_clear" style="position:relative; left:-50px; top:-20px; font-size:20px">
+      <div id="create_clear" style="position:relative; left:-120px; top:-40px; font-size:20px">
         <button class="button" value="create">Create</button>
+        <button class="button" value="undo">Undo</button>
         <button class="button" value="clear">Clear</button>
         <button class="button" value="animate" style="display: none">Animate</button>
         <a href="#" class="button" id="download" download="image.png">Download</a>
+      </div>
+      <div id="file_process" style="position:relative; left:-120px; top:-20px; font-size:20px">
+        <button class="button" value="save">Save</button>
+        <button class="button" value="load">Load</button>
+        <input type="file" id="file_input" style="display: none">
       </div>
       <!------------
       <div class="links">
@@ -101,6 +108,7 @@
     <script src="../js/global.js"></script>
     <script src="../js/function.js"></script>
     <script src="../js/class.js"></script>
+    <script src="../js/FileSaver.min.js"></script>
     <script>
       //  animate FPS control
       var fps, fpsInterval, startTime, now, then, elapsed;
@@ -130,6 +138,9 @@
       var selected_pattern_angular = "";
       var pattern_select_canvas = document.getElementById("patternselect");
       var psctx = pattern_select_canvas.getContext("2d");
+
+      var image_data_list = [];
+      var drawing_content_list = [];
     </script>
 
     <script src="../js/api.js"></script>
@@ -146,6 +157,13 @@
         });
         $("#line_width").children("button").click(function(){
           closeElseMenu("lw_slider");
+        });
+        $("#background_color").children("button").click(function(){
+          background_color = $("#background_color").children("input").val();
+          drawing_content_list[0] = background_color;
+          image_data_list = [];
+          clearCanvas(ctx, background_color);
+          drawByContent();
         });
         //////////////////////////////
         $("#rl_menu").children("button").click(function(){
@@ -176,22 +194,27 @@
           }
 
           $("#new_pattern").slideUp();
+          $("#file_process").slideUp();
           $("#select_iframe").slideDown();
         });
         $("#select_iframe").children("button").click(function(){  // cancel
           $("#select_iframe").slideUp();
           $("#new_pattern").slideDown();
+          $("#file_process").slideDown();
           $("#selectiframe").attr("src", "");
         });
         //////////////////////////////
         $("#create_clear").children("button").click(function(){
-          background_color = $("#background_color").children("input").val();
           switch($(this).val()){
             case "create":
               if (!has_selected_pattern){
                 alert("Select pattern first!");
                 break;
               }
+
+              image_data_list.push(ctx.getImageData(0, 0, window_width, window_height));
+              drawing_content_list.push(""+RECURSIVE_LEVEL+"_"+RELATIVE_MODE+"_"+PATTERN_SIZE+"_"+$("#pattern_color").children("input").val()+"_"+LINE_WIDTH+"_"+selected_pattern_angular);
+
               setParameter(
                 RECURSIVE_LEVEL, 
                 RELATIVE_MODE,
@@ -204,6 +227,16 @@
             case "clear":
               init();
               clearCanvas(ctx, background_color);
+              image_data_list = [];
+              drawing_content_list = [];
+              drawing_content_list.push(background_color);
+              break;
+            case "undo":
+              if (image_data_list.length == 0){
+                break;
+              }
+              drawing_content_list.pop();
+              ctx.putImageData(image_data_list.pop(), 0, 0);
               break;
           }
         });
@@ -211,6 +244,24 @@
         $("#download").click(function(){
           var image = canvas.toDataURL();
           $(this).attr("href", image);
+        });
+
+        //////////////////////////////
+        $("#file_process").children("button").click(function(){
+          if ($(this).val() == "save"){
+            saveFile("Pattern_Save.txt");
+          } else if ($(this).val() == "load"){
+            $("#file_input").click();
+          }
+        });
+        $("#file_input").change(function(){
+          var f_input = document.getElementById("file_input");
+          if (!f_input.files[0]){
+            alert("Invalid File!");
+            return;
+          }
+          loadFile(f_input.files[0]);
+          f_input.value = "";
         });
       });
 
@@ -266,6 +317,54 @@
         draw.drawOrbit();
       }
 
+      function drawByContent(){
+        var list_length = drawing_content_list.length;
+        if (list_length <= 1){
+          return;
+        }
+        image_data_list = [];
+        background_color = drawing_content_list[0];
+        clearCanvas(ctx, background_color);
+        for (var i = 1; i < list_length; i++){
+          image_data_list.push(ctx.getImageData(0, 0, window_width, window_height));
+          var content_split = drawing_content_list[i].split("_");
+          setParameter(
+            Number(content_split[0]), 
+            content_split[1],
+            Number(content_split[2]),
+            content_split[3],
+            Number(content_split[4])
+          );
+          redraw(content_split[5]);
+        }
+      }
+
+      function saveFile(name){
+        var str = "";
+        for (var i = 0; i < drawing_content_list.length; i++){
+          str += drawing_content_list[i] + " ";
+        }
+        var blob = new Blob([str], {type: "text/plain;charset=utf-8"});
+        saveAs(blob, name);
+      }
+
+      function loadFile(file){
+        //var files = event.target.files;
+        var reader = new FileReader();
+        reader.onload = function()
+        {
+          var data = this.result.split(" ");
+          background_color = data[0];
+          drawing_content_list = [];
+          drawing_content_list.push(background_color);
+          for (var i = 1; i < data.length - 1; i++){
+            drawing_content_list.push(data[i]);
+          }
+          drawByContent();
+        }
+        reader.readAsText (file);
+      }
+
       function main(){
         /*
         setParameter(2, RMRM, 1.5, '#ff0000');
@@ -276,6 +375,7 @@
         redraw(0.3, 0.7);
         */
         clearCanvas(ctx);
+        drawing_content_list.push(background_color);
         //display();
         psctx.beginPath();
         //psctx.strokeStyle = color;
@@ -323,6 +423,7 @@
         $("#pattern_detail").html("("+selected_pattern_angular+")");
         $("#select_iframe").slideUp();
         $("#new_pattern").slideDown();
+        $("#file_process").slideDown();
         $("#selectiframe").attr("src", "");
       }
 
