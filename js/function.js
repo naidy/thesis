@@ -22,6 +22,12 @@ function clearCanvas(ctx, color){
 	ctx.fillRect(0, 0, window_width, window_height);
 }
 
+function clearCanvasSVG(ctx){
+	while (ctx.lastChild){
+		ctx.removeChild(ctx.lastChild);
+	}
+}
+
 // Number Format 123,456,789
 function numberFormat (n){
 	return n.toFixed().replace(/(\d)(?=(\d{3})+(,|$))/g, '$1,');
