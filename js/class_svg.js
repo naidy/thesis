@@ -345,17 +345,22 @@ Draw.prototype.drawOrbit = function(){
 }
 
 Draw.prototype.drawOrbitSVG = function(){
+	var path = this.orbit.getPath();
 	var ns = svg.namespaceURI;
-	var path = document.createElementNS(ns, "path");
+	var svg_path = document.createElementNS(ns, "path");
 	var d = "";
-	path.setAttribute("stroke", this.orbit.color);
-	path.setAttribute("stroke-width", this.line_width);
-	path.setAttribute("stroke-linejoin", "miter");
+	svg_path.setAttribute("stroke", this.orbit.color);
+	svg_path.setAttribute("fill", "none");
+	svg_path.setAttribute("stroke-width", this.line_width);
+	svg_path.setAttribute("stroke-linejoin", "miter");
 	d += "M" + path[0].x + " " + path[0].y + " ";
 	for (var i = 1, c; c = path[i]; i++)
 		d += "L" + c.x + " " + c.y + " ";
 	d += "Z";
-	console.log (d);
+	svg_path.setAttribute("d", d);
+	svg.appendChild(svg_path);
+	//console.log (d);
+	image_data_list.push(svg_path);
 }
 
 Draw.prototype.drawOrbitAnimate = function(speed){
