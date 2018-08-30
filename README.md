@@ -1,3 +1,5 @@
 # Geometric Recursive Patterns Generating System
 
-[Demo](https://naidy.github.io/thesis/)
+[Demo (Canvas)](https://naidy.github.io/thesis/)
+
+[Demo (SVG)](https://naidy.github.io/thesis/html/svg_test.html)
